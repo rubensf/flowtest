@@ -11,6 +11,12 @@ jobs:
     name: PR Approval Gateway
     runs-on: ubuntu-20.04
     steps:
+      - name: Print body
+        run: echo ${{ github.event.pull_request.bodyText }}
+      - name: Print PR
+        run: echo ${{ github.event.pull_request }}
+      - name: Print Review
+        run: echo ${{ github.event.pull_request.review_decision }}
       - name: Fail if not approved
-        if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW') && github.event.pull_request.review_decision != 'approved' }}
+        if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW=') && github.event.pull_request.review_decision != 'approved' }}
         run: exit 1
