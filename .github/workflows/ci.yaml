@@ -18,8 +18,7 @@ jobs:
         if: ${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }}
         run: exit 0
       - name: Succeed If Approved
-        if: ${{ failure() && github.event.pull_request.review_decision == 'approved' }}
+        if: ${{ github.event.pull_request.review_decision == 'approved' }}
         run: exit 0
       - name: Fail
-        if: ${{ failure() }}
         run: exit 1
