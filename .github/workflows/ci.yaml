@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout
-        if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW') && github.event.pull_request.review_decision != PullRequestReviewDecision.APPROVED }}
+        if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW') && github.event.pull_request.review_decision != 'approved' }}
         uses: actions/checkout@v3
 
     # steps:
