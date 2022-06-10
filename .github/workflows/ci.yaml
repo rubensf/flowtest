@@ -10,10 +10,13 @@ on:
 jobs:
   approval:
     name: PR Approval Gateway
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Print Context
-        run: echo "$GITHUB_CONTEXT"
+        shell: bash
+        run: |
+          echo "Repo $GH_REPO"
+          echo "Context: $GITHUB_CONTEXT"
       - name: Fail if not approved
         if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW=') && github.event.pull_request.review_decision != 'approved' }}
         run: exit 1
