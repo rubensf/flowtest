@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print Context
-        run: echo '${{ toJSON(github) }}'
+        run: echo '${{ toJSON(github.event.pull_request) }}'
       - name: Fail if not approved
-        if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW=') && github.event.pull_request.review_decision != 'approved' }}
+        if: ${{ !contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') && github.event.pull_request.review_decision != 'approved' }}
         run: exit 1
