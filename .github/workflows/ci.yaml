@@ -13,14 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print Context
-        run: |
-          echo "Repo: $GH_REPO"
-          echo "Context: $GITHUB_CONTEXT"
-      - name: Print PR
-        run: echo '${{ toJSON(github.event.pull_request) }}'
+        run: echo '${{ toJSON(github) }}'
       - name: Fail if not approved
         if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW=') && github.event.pull_request.review_decision != 'approved' }}
         run: exit 1
-      - name: Fallback test review decision only
-        if: ${{ failure() && github.event.pull_request.review_decision == 'approved' }}
-        run: exit 0
