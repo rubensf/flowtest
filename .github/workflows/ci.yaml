@@ -17,7 +17,7 @@ jobs:
           echo "Repo: $GH_REPO"
           echo "Context: $GITHUB_CONTEXT"
       - name: Print PR
-        run: echo "PR: ${{ toJSON(github.event.pull_request) }}"
+        run: echo '${{ toJSON(github.event.pull_request) }}'
       - name: Fail if not approved
         if: ${{ !contains(github.event.pull_request.bodyText, 'EMERGENCY_SKIP_REVIEW=') && github.event.pull_request.review_decision != 'approved' }}
         run: exit 1
