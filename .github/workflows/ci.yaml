@@ -4,6 +4,8 @@ on:
     types: [opened, edited]
     branches:
       - main
+  pull_request_review:
+    types: [submitted]
 jobs:
   approval:
     name: PR Approval Gateway
