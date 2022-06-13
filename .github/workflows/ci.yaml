@@ -14,11 +14,13 @@ jobs:
     steps:
       - name: Print Context
         run: echo '${{ toJSON(github.event.pull_request) }}'
-      - name: Succeed If Emergency Tag
-        if: ${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }}
-        run: exit 0
-      - name: Succeed If Approved
-        if: ${{ github.event.pull_request.review_decision == 'approved' }}
-        run: exit 0
-      - name: Fail
-        run: exit 1
+      - name: Print Review
+        run: echo '${{ toJSON(github.event.review) }}'
+      - name: Fail If No Emergency Tag or Approval
+        env:
+          AUTH_HEADER: '${{ secrets.GITHUB_TOKEN }}'
+          JSON_HEADER: 'Content-Type: application/json'
+          REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
+        run: |
+          reviews=(curl -sSL --request POST -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
+          echo $reviews
