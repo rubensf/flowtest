@@ -18,9 +18,9 @@ jobs:
         run: echo '${{ toJSON(github.event.review) }}'
       - name: Fail If No Emergency Tag or Approval
         env:
-          AUTH_HEADER: '${{ secrets.GITHUB_TOKEN }}'
+          AUTH_HEADER: 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'
           JSON_HEADER: 'Content-Type: application/json'
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
-          reviews=$(curl -sSL --request POST -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
+          reviews=$(curl -sSL -X POST -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
           echo $reviews
