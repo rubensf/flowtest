@@ -1,4 +1,4 @@
-name: ci
+name: PR Approval Checks
 on:
   pull_request:
     types: [opened, edited]
@@ -9,7 +9,6 @@ on:
   workflow_dispatch:
 jobs:
   approval:
-    name: PR Approval Checks
     runs-on: ubuntu-latest
     steps:
       - name: Fail If No Emergency Tag or Approval
