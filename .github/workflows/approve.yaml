@@ -1,0 +1,12 @@
+name: approve
+on:
+  workflow_run:
+    workflows: [PR Approval Checks]
+    types: [completed]
+jobs:
+  on-failure:
+    name: PR Approval Gate
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: exit 1
