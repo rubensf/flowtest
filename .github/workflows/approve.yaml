@@ -1,7 +1,7 @@
 name: PR Approval Gate
 on:
   workflow_run:
-    workflows: [PR Approval Checks / approval]
+    workflows: [PR Approval Checks]
     types: [completed]
     branches: [main]
 jobs:
