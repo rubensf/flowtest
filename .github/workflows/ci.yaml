@@ -12,10 +12,6 @@ jobs:
     name: PR Approval Gateway
     runs-on: ubuntu-latest
     steps:
-      - name: Print Context
-        run: echo '${{ toJSON(github.event.pull_request) }}'
-      - name: Print Review
-        run: echo '${{ toJSON(github.event.review) }}'
       - name: Fail If No Emergency Tag or Approval
         env:
           AUTH_HEADER: 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'
@@ -25,38 +21,30 @@ jobs:
           reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" | jq --raw-output '.[] | @base64')
           declare -A changes_requested_reviews
           declare -A approved_reviews
-          echo "reviews $reviews"
           for review in $reviews
           do
             review_state=$(echo "$review" | base64 -d | jq --raw-output '.state')
             review_user=$(echo "$review" | base64 -d | jq --raw-output '.user.id')
-            echo "State: $review_state"
-            echo "User: $review_user"
             if [[ $review_state == "CHANGES_REQUESTED" ]]
             then
-              echo "$review_user requested changes"
               changes_requested_reviews[$review_user]='true'
               unset approved_reviews[$review_user]
             elif [[ $review_state == "APPROVED" ]]
             then
-              echo "$review_user approved"
               approved_reviews[$review_user]='true'
               unset changes_requested_reviews[$review_user]
             fi
           done
-          echo "len approved ${#approved_reviews[@]}"
-          echo "len changes ${#changes_requested_reviews[@]}"
           if [[ ${#approved_reviews[@]} > 0 && ${#changes_requested_reviews[@]} == 0 ]]
           then
             echo "Pull Request Approved"
             exit 0
           fi
           echo "Pending Approvals & Resolving Requested Changes"
-          echo "${{ github.event.pull_request.body }}"
-          echo "${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }}"
           if [[ ${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }} == "true" ]]
           then
             echo "Bypass Description found"
             exit 0
           fi
+          echo "No bypass string found"
           exit 1
