@@ -25,7 +25,7 @@ jobs:
           reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
           declare -A changes_requested_reviews
           declare -A approved_reviews
-          for $review in $reviews
+          for review in $reviews
           do
             review_state=$(echo "$review" | base64 -d | jq --raw-output '.state')
             review_user=$(echo "$review" | base64 -d | jq --raw-output '.user.id')
