@@ -3,7 +3,6 @@ on:
   workflow_run:
     workflows: [PR Approval Checks]
     types: [completed]
-    branches: [main]
 jobs:
   on-failure:
     runs-on: ubuntu-latest
