@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Check PR Approval Checks
         run: |
-        if ${{ github.event.workflow_run.conclusion == 'failure' }}
+        if [[ ${{ github.event.workflow_run.conclusion }} == "failure" ]]
         then
           exit 1
         fi
