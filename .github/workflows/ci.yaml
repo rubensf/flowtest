@@ -23,4 +23,31 @@ jobs:
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
           reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
-          echo $reviews
+          declare -A changes_requested_reviews
+          declare -A approved_reviews
+          for $review in $reviews
+          do
+            review_state=$(echo "$review" | base64 -d | jq --raw-output '.state')
+            review_user=$(echo "$review" | base64 -d | jq --raw-output '.user.id')
+            if [[ $review_state == "CHANGES_REQUESTED" ]]
+            then
+              $changes_requested_reviews[$review_user] = 'true'
+              unset approved_reviews[$review_user]
+            elif [[ $review_state == "APPROVED" ]]
+            then
+              $approved_reviews[$review_user] = 'true'
+              unset changes_requested_reviews[$review_user]
+            fi
+          done
+          if [[ ${#approved_reviews[@]} > 0 || ${#changes_requested_reviews[@]} == 0 ]]
+          then
+            echo "Pull Request Approved"
+            exit 0
+          fi
+          echo "Pending Approvals & Resolving Requested Changes"
+          if [[ ${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }} ]]
+          then
+            echo "Bypass Description found"
+            exit 0
+          fi
+          exit 1
