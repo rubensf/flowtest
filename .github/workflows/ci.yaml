@@ -29,6 +29,8 @@ jobs:
           do
             review_state=$(echo "$review" | base64 -d | jq --raw-output '.state')
             review_user=$(echo "$review" | base64 -d | jq --raw-output '.user.id')
+            echo "State: $review_state"
+            echo "User: $review_user"
             if [[ $review_state == "CHANGES_REQUESTED" ]]
             then
               echo "$review_user requested changes"
@@ -43,7 +45,7 @@ jobs:
           done
           echo "len approved ${#approved_reviews[@]}"
           echo "len changes ${#changes_requested_reviews[@]}"
-          if [[ ${#approved_reviews[@]} > 0 || ${#changes_requested_reviews[@]} == 0 ]]
+          if [[ ${#approved_reviews[@]} > 0 && ${#changes_requested_reviews[@]} == 0 ]]
           then
             echo "Pull Request Approved"
             exit 0
