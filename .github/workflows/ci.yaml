@@ -22,5 +22,5 @@ jobs:
           JSON_HEADER: 'Content-Type: application/json'
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
-          reviews=(curl -sSL --request POST -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
+          reviews=$(curl -sSL --request POST -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}")
           echo $reviews
