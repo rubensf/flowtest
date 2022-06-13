@@ -22,7 +22,7 @@ jobs:
           JSON_HEADER: 'Content-Type: application/json'
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
-          reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}") | jq --raw-output '.[] | @base64'
+          reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" | jq --raw-output '.[] | @base64')
           declare -A changes_requested_reviews
           declare -A approved_reviews
           echo "reviews $reviews"
