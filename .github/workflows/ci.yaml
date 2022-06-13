@@ -52,6 +52,8 @@ jobs:
             exit 0
           fi
           echo "Pending Approvals & Resolving Requested Changes"
+          echo "${{ github.event.pull_request.body }}"
+          echo "${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }}"
           if [[ ${{ contains(github.event.pull_request.body, 'EMERGENCY_SKIP_REVIEW') }} ]]
           then
             echo "Bypass Description found"
