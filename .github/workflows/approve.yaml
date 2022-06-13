@@ -8,8 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR Approval Checks
+        env:
+          CONCLUSION: '${{ github.event.workflow_run.conclusion }}'
         run: |
-        if [[ ${{ github.event.workflow_run.conclusion }} == "failure" ]]
+        if [[ ${CONCLUSION} == "failure" ]]
         then
           exit 1
         fi
