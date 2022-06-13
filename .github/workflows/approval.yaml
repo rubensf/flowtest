@@ -15,5 +15,6 @@ jobs:
           echo "Bypass Description found"
           curl -sSL -X POST \
           -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' \
-          -d '{"event":"APPROVE"}' \
-          --url 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
+          --url 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews' \
+          -d '{"event":"APPROVED"}'
+
