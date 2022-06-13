@@ -25,6 +25,7 @@ jobs:
           reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}") | jq --raw-output '.[] | @base64'
           declare -A changes_requested_reviews
           declare -A approved_reviews
+          echo "reviews $reviews"
           for review in $reviews
           do
             review_state=$(echo "$review" | base64 -d | jq --raw-output '.state')
