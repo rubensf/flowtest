@@ -1,10 +1,9 @@
 name: PR Approval Gate
 on:
   workflow_run:
-    workflows: [PR Approval Checks]
+    workflows: [PR Approval Checks / approval]
     types: [completed]
-    branches:
-      - main
+    branches: [main]
 jobs:
   on-failure:
     runs-on: ubuntu-latest
