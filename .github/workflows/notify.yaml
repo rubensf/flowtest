@@ -14,24 +14,24 @@ jobs:
           JSON_HEADER: 'Content-Type: application/json'
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
-          reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" | jq --raw-output '.[] | @base64')
+          REVIEWS=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" | jq --raw-output '.[] | @base64')
           declare -A changes_requested_reviews
           declare -A approved_reviews
-          for review in $reviews
+          for review in $REVIEWS
           do
-            review_state=$(echo "$review" | base64 -d | jq --raw-output '.state')
-            review_user=$(echo "$review" | base64 -d | jq --raw-output '.user.id')
-            if [[ $review_state == "CHANGES_REQUESTED" ]]
+            local review_state="$(echo '$review' | base64 -d | jq --raw-output '.state')"
+            local review_user="$(echo '$review' | base64 -d | jq --raw-output '.user.id')"
+            if [[ "${review_state}" == "CHANGES_REQUESTED" ]]
             then
               changes_requested_reviews[$review_user]='true'
               unset approved_reviews[$review_user]
-            elif [[ $review_state == "APPROVED" ]]
+            elif [[ "${review_state}" == "APPROVED" ]]
             then
               approved_reviews[$review_user]='true'
               unset changes_requested_reviews[$review_user]
             fi
           done
-          if [[ ${#approved_reviews[@]} == 0 || ${#changes_requested_reviews[@]} > 0 ]]
+          if [[ "${#approved_reviews[@]}" == 0 || "${#changes_requested_reviews[@]}" > 0 ]]
           then
             echo "Pull Request Bypassed Approval"
             exit 1
