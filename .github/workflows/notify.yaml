@@ -7,7 +7,7 @@ jobs:
   approval:
     runs-on: ubuntu-latest
     steps:
-      - name: Fail If No Emergency Tag or Approval
+      - name: Fail Check If No Approval
         env:
           AUTH_HEADER: 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'
           JSON_HEADER: 'Content-Type: application/json'
