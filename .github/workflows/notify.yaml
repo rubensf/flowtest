@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fail Check If No Approval
+        if: ${{ github.event.pull_request.merged }}
         env:
           AUTH_HEADER: 'Authorization: token ${{ secrets.GITHUB_TOKEN }}'
           JSON_HEADER: 'Content-Type: application/json'
