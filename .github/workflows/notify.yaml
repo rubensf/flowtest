@@ -1,4 +1,4 @@
-name: PR Approval Checks
+name: PR Approval Bypass Notifier
 on:
   pull_request:
     types: [closed]
