@@ -16,10 +16,10 @@ jobs:
           JSON_HEADER: 'Content-Type: application/json'
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
-          echo $(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}") \
+          curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" \
           | jq --exit-code '. | map({user: .user.login, state: .state})
-             | reduce .[] as $x ({}; .[$x.user] = $x.state) | to_entries | map(.value)
-             | contains(["APPROVED"]) and (contains(["CHANGES_REQUESTED"]) | not)'
+          | reduce .[] as $x ({}; .[$x.user] = $x.state) | to_entries | map(.value)
+          | contains(["APPROVED"]) and (contains(["CHANGES_REQUESTED"]) | not)'
       - name: Slack Notification
         if: ${{ failure() }}
         env:
