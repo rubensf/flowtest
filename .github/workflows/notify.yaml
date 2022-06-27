@@ -14,24 +14,15 @@ jobs:
           JSON_HEADER: 'Content-Type: application/json'
           REVIEWS_URL: 'https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews'
         run: |
-          REVIEWS=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" | jq --raw-output '.[] | @base64')
-          declare -A changes_requested_reviews
-          declare -A approved_reviews
-          for review in $REVIEWS
-          do
-            local review_state="$(echo '$review' | base64 -d | jq --raw-output '.state')"
-            local review_user="$(echo '$review' | base64 -d | jq --raw-output '.user.id')"
-            if [[ "${review_state}" == "CHANGES_REQUESTED" ]]
-            then
-              changes_requested_reviews[$review_user]='true'
-              unset approved_reviews[$review_user]
-            elif [[ "${review_state}" == "APPROVED" ]]
-            then
-              approved_reviews[$review_user]='true'
-              unset changes_requested_reviews[$review_user]
-            fi
-          done
-          if [[ "${#approved_reviews[@]}" == 0 || "${#changes_requested_reviews[@]}" > 0 ]]
+          reviews=$(curl -sSL -H "${JSON_HEADER}" -H "${AUTH_HEADER}" "${REVIEWS_URL}" \
+            | jq '.
+            | map({user: .user.login, state: .state})
+            | reduce .[] as $x ({}; .[$x.user] = $x.state) | to_entries | map(.value)
+            | {rejected: contains(["CHANGES_REQUESTED"]), approved: contains(["APPROVED"])}'
+          )
+          approved=$(echo $reviews | jq .approved)
+          rejected=$(echo $reviews | jq .rejected)
+          if [[ ${approved} == "false" || ${rejected} == "true" ]]
           then
             echo "Pull Request Bypassed Approval"
             exit 1
